@@ -23,13 +23,14 @@ def main():
     if args.backfill:
         start_date = (today - timedelta(days=args.backfill)).strftime("%Y-%m-%d")
     else:
-        start_date = (today - timedelta(days=3)).strftime("%Y-%m-%d")
+        start_date = (today - timedelta(days=2)).strftime("%Y-%m-%d")
     
     end_date = today.strftime("%Y-%m-%d")
     
     item_list = items.getAllItemsList()
     item_s = ",".join(item_list)
     api_construct = f"https://west.albion-online-data.com/api/v2/stats/history/{item_s}.json?date={start_date}&end_date={end_date}&time-scale=24"
+    print(api_construct)
 
 if __name__ == "__main__":
     main()
