@@ -1,9 +1,13 @@
 import requests
+import os
 import argparse
 from datetime import datetime, timedelta, timezone
 import pipeline.items as items
 from supabase import create_client
 import pandas as pd
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def main():
     parser = argparse.ArgumentParser(description = "AlbionEdge Data Pipeline")
@@ -22,19 +26,19 @@ def main():
 
     today = datetime.now(timezone.utc)
 
-    if args.backfill:
-        start_date = (today - timedelta(days=args.backfill)).strftime("%Y-%m-%d")
-    else:
-        start_date = (today - timedelta(days=2)).strftime("%Y-%m-%d")
-    
     end_date = today.strftime("%Y-%m-%d")
     
     item_list = items.getAllItemsList()
     item_s = ",".join(item_list)
-    api_url_construct = f"https://west.albion-online-data.com/api/v2/stats/history/{item_s}.json?date={start_date}&end_date={end_date}&time-scale=24"
-    
-    with open('pipeline/supabase_api_key.txt','r') as file:
-        supabase_api_key = file.read()
+
+    if args.backfill:
+        start_date = (today - timedelta(days=args.backfill)).strftime("%Y-%m-%d")
+        api_url_construct = f"https://west.albion-online-data.com/api/v2/stats/history/{item_s}.json?date={start_date}&end_date={end_date}&time-scale=24"
+    else:
+        start_date = (today - timedelta(days=2)).strftime("%Y-%m-%d")
+        api_url_construct = f"https://west.albion-online-data.com/api/v2/stats/history/{item_s}.json?date={start_date}&end_date={end_date}&time-scale=6"
+
+    supabase_api_key = os.environ["SUPABASE_API_KEY"]
     
     response = requests.get(api_url_construct)
     if response.status_code != 200:
@@ -62,8 +66,7 @@ def main():
     
     df = pd.DataFrame(final_dict)
 
-    with open('pipeline/supabase_admin_link.txt','r') as file:
-        supabase_link = file.read()
+    supabase_link = os.environ["SUPABASE_ADMIN_URL"]
 
     if not args.dry_run:
         db = create_client(supabase_link,supabase_api_key)

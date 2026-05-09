@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "pandas>=3.0.2",
+    "python-dotenv>=1.2.2",
     "requests>=2.33.1",
     "supabase>=2.28.3",
 ]

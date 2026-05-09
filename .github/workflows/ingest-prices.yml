@@ -1,0 +1,31 @@
+name: Ingest Albion Market Prices
+
+on:
+    schedule:
+        - cron: "0 */6 * * *"
+    workflow_dispatch:
+
+jobs:
+    ingest:
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: astral-sh/setup-uv@v3
+              with:
+                enable-cache: true
+                cache-dependency-glob: "uv.lock"
+            
+            - name: Setup Python
+              run: uv python install 3.11
+            
+            - name: Install dependencies
+              run: uv sync --frozen
+            
+            - name: Run ingestion
+              env:
+                SUPABASE_API_KEY: ${{ secrets.SUPABASE_API_KEY }}
+                SUPABASE_ADMIN_URL: ${{ secrets.SUPABASE_ADMIN_URL }}
+              run: uv run python -m pipeline.ingest

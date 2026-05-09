@@ -1,2 +1,3 @@
 pipeline/supabase_api_key.txt
 pipeline/supabase_admin_link.txt
+.env

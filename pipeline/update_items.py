@@ -1,16 +1,17 @@
 import pipeline.items as items
+import os
 import pandas as pd
 from supabase import create_client
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def main():
     df = pd.DataFrame(items.getAllItemDetailsDict())
-    print(df.head())
 
-    with open('pipeline/supabase_api_key.txt','r') as file:
-        supabase_api_key = file.read()
+    supabase_api_key = os.environ["SUPABASE_API_KEY"]
     
-    with open('pipeline/supabase_admin_link.txt','r') as file:
-        supabase_link = file.read()
+    supabase_link = os.environ["SUPABASE_ADMIN_URL"]
 
     db = create_client(supabase_link,supabase_api_key)
     db.table("items").upsert(
