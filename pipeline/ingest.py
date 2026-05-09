@@ -2,6 +2,8 @@ import requests
 import argparse
 from datetime import datetime, timedelta, timezone
 import pipeline.items as items
+from supabase import create_client
+import pandas as pd
 
 def main():
     parser = argparse.ArgumentParser(description = "AlbionEdge Data Pipeline")
@@ -29,8 +31,45 @@ def main():
     
     item_list = items.getAllItemsList()
     item_s = ",".join(item_list)
-    api_construct = f"https://west.albion-online-data.com/api/v2/stats/history/{item_s}.json?date={start_date}&end_date={end_date}&time-scale=24"
-    print(api_construct)
+    api_url_construct = f"https://west.albion-online-data.com/api/v2/stats/history/{item_s}.json?date={start_date}&end_date={end_date}&time-scale=24"
+    
+    with open('pipeline/supabase_api_key.txt','r') as file:
+        supabase_api_key = file.read()
+    
+    response = requests.get(api_url_construct)
+    if response.status_code != 200:
+        raise ValueError(f"Failed with status code : {response.status_code}")
+
+    response_json = response.json()
+
+    final_dict = {
+        "item_id" : [],
+        "city" : [],
+        "quality" : [],
+        "timestamp" : [],
+        "avg_price" : [],
+        "item_count" : []
+    }
+
+    for cat in response_json:
+        for t in cat['data']:
+            final_dict['item_id'].append(cat['item_id'])
+            final_dict['city'].append(cat['location'])
+            final_dict['quality'].append(cat['quality'])
+            final_dict['timestamp'].append(t['timestamp'])
+            final_dict['avg_price'].append(t['avg_price'])
+            final_dict['item_count'].append(t['item_count'])
+    
+    df = pd.DataFrame(final_dict)
+    print(df.head())
+
+    if not args.dry_run:
+        db = create_client("https://wrkqpdcholxgkvppflvz.supabase.co",supabase_api_key)
+        db.table("price_history").upsert(
+            df.to_dict(orient="records"),
+            on_conflict="item_id,city,quality,timestamp"
+        ).execute()
+
 
 if __name__ == "__main__":
     main()
