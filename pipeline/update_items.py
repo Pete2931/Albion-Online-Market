@@ -8,8 +8,11 @@ def main():
 
     with open('pipeline/supabase_api_key.txt','r') as file:
         supabase_api_key = file.read()
+    
+    with open('pipeline/supabase_admin_link.txt','r') as file:
+        supabase_link = file.read()
 
-    db = create_client("https://wrkqpdcholxgkvppflvz.supabase.co",supabase_api_key)
+    db = create_client(supabase_link,supabase_api_key)
     db.table("items").upsert(
         df.to_dict(orient="records"),
         on_conflict="item_id"

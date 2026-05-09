@@ -61,10 +61,12 @@ def main():
             final_dict['item_count'].append(t['item_count'])
     
     df = pd.DataFrame(final_dict)
-    print(df.head())
+
+    with open('pipeline/supabase_admin_link.txt','r') as file:
+        supabase_link = file.read()
 
     if not args.dry_run:
-        db = create_client("https://wrkqpdcholxgkvppflvz.supabase.co",supabase_api_key)
+        db = create_client(supabase_link,supabase_api_key)
         db.table("price_history").upsert(
             df.to_dict(orient="records"),
             on_conflict="item_id,city,quality,timestamp"
