@@ -1,7 +1,15 @@
 # Name of items and range of tiers they have also if they have enchants
 items = {"BAG" : (4,8,True,"Bags","Bags"),
          "2H_TOOL_KNIFE" : (4,8,False,"Gathering Equipment","Hide"),
-         "CAPE" : (4,8,True,"Capes","Cape")}
+         "CAPE" : (4,8,True,"Capes","Cape"),
+         "HEAD_GATHERER_HIDE" : (4,8,True,"Gathering Equipment","Hide"),
+         "ARMOR_GATHERER_HIDE" : (4,8,True,"Gathering Equipment","Hide"),
+         "SHOES_GATHERER_HIDE" : (4,8,True,"Gathering Equipment","Hide"),
+         "BACKPACK_GATHERER_HIDE" : (4,8,True,"Gathering Equipment","Hide"),
+         "LEATHER" : (2,8,False,"Resources","Refined Resources"),
+         "PLANKS" : (2,8,False,"Resources","Refined Resources"),
+         "METALBAR" : (2,8,False,"Resources","Refined Resources"),
+         "STONEBLOCK" : (2,8,False,"Resources","Refined Resources")}
 tiers = ["T" + str(c) for c in range(1,9)]
 
 # Returns the list of all item_id's from the items dictionary according to their specifications
