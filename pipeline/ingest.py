@@ -22,14 +22,23 @@ def main():
         action = "store_true",
         help = "Only Fetch Data, but doesn't write to database"
     )
+    parser.add_argument(
+        "--name",
+        type = str,
+        default = None,
+        help = "Only update the items with this name"
+    )
     args = parser.parse_args()
 
     today = datetime.now(timezone.utc)
 
     end_date = today.strftime("%Y-%m-%d")
     
-    item_list = items.getAllItemsList()
-    item_s = ",".join(item_list)
+    if not args.name:
+        item_list = items.getAllItemsList()
+        item_s = ",".join(item_list)
+    else:
+        item_s = items.getOneItemString(args.name)
 
     if args.backfill:
         start_date = (today - timedelta(days=args.backfill)).strftime("%Y-%m-%d")

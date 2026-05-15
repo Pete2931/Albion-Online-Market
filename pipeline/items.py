@@ -50,3 +50,16 @@ def getAllItemDetailsDict(items = items, tiers = tiers):
                     res['category'].append(items[i][3])
                     res['subcategory'].append(items[i][4])
     return res
+
+# Returns all the item id tiers and enchants for a specific item name
+def getOneItemString (item):
+    res = []
+    if item in items:
+        for t in range(items[item][0], items[item][1]):
+            res.append(f"{tiers[t-1]}_{item}")
+            if (items[item][2] == True):
+                for e in range(1,5):
+                    res.append(f"{tiers[t-1]}_{item}@{e}")
+        return ",".join(res)
+    else:
+        raise "Item specifications not configured in items.py"
