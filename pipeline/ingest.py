@@ -35,7 +35,7 @@ def main():
         start_date = (today - timedelta(days=args.backfill)).strftime("%Y-%m-%d")
         api_url_construct = f"https://west.albion-online-data.com/api/v2/stats/history/{item_s}.json?date={start_date}&end_date={end_date}&time-scale=24"
     else:
-        start_date = (today - timedelta(days=2)).strftime("%Y-%m-%d")
+        start_date = (today - timedelta(days=1)).strftime("%Y-%m-%d")
         api_url_construct = f"https://west.albion-online-data.com/api/v2/stats/history/{item_s}.json?date={start_date}&end_date={end_date}&time-scale=6"
 
     supabase_api_key = os.environ["SUPABASE_API_KEY"]
